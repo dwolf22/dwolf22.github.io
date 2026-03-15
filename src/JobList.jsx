@@ -24,10 +24,14 @@ export default function JobList() {
     // ------------------------------
     const [isAdding, setAdding] = useState(false);
 
+    // ------------------------------
+    // State for search filter (status)
+    // ------------------------------
     const [search, setSearch] = useState("")
 
     // ------------------------------
     // Save jobs to localStorage whenever jobs array changes
+    // This ensures jobs persist after page reload
     // ------------------------------
     useEffect(() => {
         localStorage.setItem("jobs", JSON.stringify(jobs));
@@ -35,7 +39,7 @@ export default function JobList() {
 
     // ------------------------------
     // Toggle the Add Job form visibility
-    // If opening the form for adding, clear editJob
+    // If opening the form for adding a new job, clear editJob
     // ------------------------------
     const addButtonVisible = () => {
         setAdding(!isAdding)
@@ -50,28 +54,28 @@ export default function JobList() {
     const sendJob = (job) => {
 
         if (editJob) {
-            // Update existing job
+            // Update existing job in the array
             setJobs(prevJobs =>
                 prevJobs.map(j =>
-                    j.id === job.id ? job : j // Replace matching job
+                    j.id === job.id ? job : j // Replace the matching job
                 )
             );
-            setEditJob(null); // Clear edit state
+            setEditJob(null); // Clear edit state after updating
         } else {
             // Add new job
             const newJob = {
                 ...job,
-                id:Date.now() // Unique ID for the job
+                id: Date.now() // Unique ID for the job
             };
 
-            setJobs(prev => [...prev, newJob]);
+            setJobs(prev => [...prev, newJob]); // Append to existing jobs
         }
 
         setAdding(false); // Close the form after submission
     }
 
     // ------------------------------
-    // Remove a job from the list by index
+    // Remove a job from the list by its index
     // ------------------------------
     const remove = (index) => {
         setJobs(prevJobs => prevJobs.filter((_, i) => i !== index));
@@ -86,11 +90,18 @@ export default function JobList() {
         setAdding(true)
     }
 
+    // ------------------------------
+    // Filter jobs based on search criteria
+    // If no search value or "All" is selected, show all jobs
+    // ------------------------------
     const searchedJobs = jobs.filter((job) => {
         if (!search || search === 'All') return true;
         return job.status === search;
     })
 
+    // ------------------------------
+    // Handle changes from the SearchBar component
+    // ------------------------------
     const handleSearch = (value) => {
         setSearch(value)
     }
@@ -100,7 +111,9 @@ export default function JobList() {
     // ------------------------------
     return (
         <div>
+            {/* Search bar for filtering by status */}
             <SearchBar onChange={handleSearch} />
+
             {/* Add Job button */}
             <div className="row mb-3 justify-content-center">
                 <button className="addJob rounded-4 bg-light border border-dark col-4" onClick={addButtonVisible}>
@@ -111,7 +124,7 @@ export default function JobList() {
             {/* Show Add/Edit Job form if isAdding is true */}
             {isAdding && (
                 <AddJob
-                    getJob={sendJob}   // Pass function to handle submission
+                    getJob={sendJob}   // Pass function to handle form submission
                     editJob={editJob}  // Pass job to edit (if editing)
                 />
             )}
@@ -139,11 +152,8 @@ export default function JobList() {
                         <button onClick={() => remove(i)} className='rounded-4 bg-light border border-dark'>
                             Delete
                         </button>
-
-
-
                     </div>
-            ))}
+                ))}
             </div>
 
         </div>
