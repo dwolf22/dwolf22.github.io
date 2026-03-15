@@ -89,7 +89,7 @@ export default function JobList() {
     const update = (upDatedJobs) => {
         setJobs(prevJobs => {
             prevJobs.map(job =>
-            job.id === upDatedJobs.id ? upDatedJobs : job
+                job.id === upDatedJobs.id ? upDatedJobs : job
             )
         })
         setEditJob(null);
@@ -97,7 +97,7 @@ export default function JobList() {
     }
 
     const searchedJobs = jobs.filter((job) => {
-        if(!search || search === 'All') return true;
+        if (!search || search === 'All') return true;
         return job.status === search;
     })
 
@@ -110,11 +110,13 @@ export default function JobList() {
     // ------------------------------
     return (
         <div>
-            <SearchBar onChange={handleSearch}/>
+            <SearchBar onChange={handleSearch} />
             {/* Add Job button */}
-            <button className="addJob" onClick={addButtonVisible}>
-                Add Job
-            </button>
+            <div className="row mb-3 justify-content-center">
+                <button className="addJob rounded-4 bg-light border border-dark col-4" onClick={addButtonVisible}>
+                    Add Job
+                </button>
+            </div>
 
             {/* Show Add/Edit Job form if isAdding is true */}
             {isAdding && (
@@ -125,30 +127,34 @@ export default function JobList() {
             )}
 
             {/* Display the list of jobs */}
-            {searchedJobs.map((job, i) => (
-                <div className="jobBox" key={job.id || i}>
+            <div className="jobBox row justify-content-center" >
+                {searchedJobs.map((job, i) => (
 
-                    <h3>{job.company}</h3>
+                    <div className="col-sm-2 border" key={job.id || i}>
+                        <h3>{job.company}</h3>
 
-                    <ul>
-                        <li>Role: {job.role}</li>
-                        <li>Date: {job.date}</li>
-                        <li>Status: {job.status}</li>
-                        <li>Notes: {job.notes}</li>
-                    </ul>
+                        <ul>
+                            <li>Role: {job.role}</li>
+                            <li>Date: {job.date}</li>
+                            <li>Status: {job.status}</li>
+                            <li>Notes: {job.notes}</li>
+                        </ul>
 
-                    {/* Edit button */}
-                    <button onClick={() => edit(job)}>
-                        Edit
-                    </button>
+                        {/* Edit button */}
+                        <button onClick={() => edit(job)} className='rounded-4 bg-light border border-dark'>
+                            Edit
+                        </button>
 
-                    {/* Delete button */}
-                    <button onClick={() => remove(i)}>
-                        Delete
-                    </button>
+                        {/* Delete button */}
+                        <button onClick={() => remove(i)} className='rounded-4 bg-light border border-dark'>
+                            Delete
+                        </button>
 
-                </div>
+
+
+                    </div>
             ))}
+            </div>
 
         </div>
     )
